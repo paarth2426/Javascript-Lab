@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palindrome Checker</title>
+    <style>
+        :root {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 35%), #f1f5f9;
+        }
+
+        .checker-shell {
+            width: min(100%, 760px);
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            overflow: hidden;
+        }
+
+        .checker-panel {
+            padding: 36px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: clamp(1.9rem, 2.5vw, 2.4rem);
+            letter-spacing: -0.04em;
+        }
+
+        p {
+            margin: 0 0 24px;
+            color: #475569;
+            line-height: 1.75;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #334155;
+        }
+
+        input {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid #cbd5e1;
+            padding: 14px 16px;
+            font-size: 1rem;
+            background: #f8fafc;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.12);
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            border-radius: 14px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, #4338ca, #6366f1);
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+
+        .result-card {
+            margin-top: 22px;
+            padding: 22px;
+            border-radius: 20px;
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            color: #0f172a;
+        }
+
+        .message {
+            margin: 0;
+            font-weight: 600;
+            color: #dc2626;
+            min-height: 1.4em;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .student-badge {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 18px;
+            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.12);
+            color: #0f172a;
+            font-size: 0.92rem;
+            line-height: 1.45;
+            z-index: 999;
+            text-align: right;
+        }
+
+        .student-badge strong {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 640px) {
+            .student-badge {
+                position: static;
+                margin: 0 auto 24px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .checker-shell {
+                width: min(100%, 100%);
+                border-radius: 22px;
+                box-shadow: none;
+                border: none;
+            }
+
+            .checker-panel {
+                padding: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="student-badge">
+        <strong>Paarth Maheshwari</strong>
+        PRN: 24070521050<br>
+        SEM: 5 A
+    </div>
+    <div class="checker-shell">
+        <div class="checker-panel">
+            <h1>Palindrome Checker</h1>
+            <p>Type a word or phrase and verify whether it reads the same forwards and backwards. This example uses scoped helper functions, closure, and try/catch for validation.</p>
+
+            <form id="palindromeForm">
+                <div class="form-group">
+                    <label for="phraseInput">Enter text</label>
+                    <input id="phraseInput" type="text" placeholder="Example: Race car" required>
+                </div>
+                <div class="button-row">
+                    <button type="submit">Check Palindrome</button>
+                    <button type="button" id="resetBtn" class="secondary">Reset</button>
+                </div>
+                <p class="message" id="validationMessage"></p>
+            </form>
+
+            <div id="resultCard" class="result-card hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const createPalindromeService = function () {
+            /** @type {(value: string) => string} */
+            const normalize = function (value) {
+                return value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]/g, '');
+            };
+
+            const reverseText = function (text) {
+                return text.split('').reverse().join('');
+            };
+
+            const buildResult = function (value, result) {
+                return `"${value}" is ${result ? '' : 'not '}a palindrome.`;
+            };
+
+            return {
+                check(value) {
+                    try {
+                        if (typeof value !== 'string') {
+                            throw new TypeError('Input must be text.');
+                        }
+
+                        const trimmed = value.trim();
+
+                        if (!trimmed) {
+                            throw new Error('Please enter a phrase to check.');
+                        }
+
+                        const cleanValue = normalize(trimmed);
+
+                        if (!cleanValue) {
+                            throw new Error('Input must contain letters or digits.');
+                        }
+
+                        const isPalindrome = cleanValue === reverseText(cleanValue);
+                        return {
+                            success: true,
+                            message: buildResult(trimmed, isPalindrome),
+                            isPalindrome
+                        };
+                    } catch (error) {
+                        return {
+                            success: false,
+                            message: error instanceof Error ? error.message : 'An unexpected error occurred.'
+                        };
+                    }
+                }
+            };
+        };
+
+        const palindromeService = createPalindromeService();
+
+        const form = document.getElementById('palindromeForm');
+        const input = document.getElementById('phraseInput');
+        const validationMessage = document.getElementById('validationMessage');
+        const resultCard = document.getElementById('resultCard');
+        const resetBtn = document.getElementById('resetBtn');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            validationMessage.textContent = '';
+            resultCard.classList.add('hidden');
+
+            const text = input.value;
+            const response = palindromeService.check(text);
+
+            if (!response.success) {
+                validationMessage.textContent = response.message;
+                return;
+            }
+
+            validationMessage.textContent = '';
+            resultCard.textContent = response.message;
+            resultCard.classList.remove('hidden');
+        });
+
+        resetBtn.addEventListener('click', function () {
+            input.value = '';
+            validationMessage.textContent = '';
+            resultCard.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>

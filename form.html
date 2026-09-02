@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIT Nagpur - Student Entry Form</title>
+    <style>
+        :root {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #111827;
+            background: #eef2f7;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at top, rgba(59, 130, 246, 0.12), transparent 35%), #eef2f7;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .page-shell {
+            width: min(100%, 980px);
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 2.5vw, 2.5rem);
+            margin: 0 0 8px;
+            letter-spacing: -0.04em;
+        }
+
+        p,
+        label,
+        li {
+            margin: 0 0 18px;
+            font-size: 1rem;
+            color: #475569;
+        }
+
+        a {
+            color: #4338ca;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: #e2e8f0;
+            margin: 28px 0;
+        }
+
+        form {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 28px;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+        }
+
+        p.field {
+            display: grid;
+            gap: 10px;
+        }
+
+        input {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid #cbd5e1;
+            padding: 14px 16px;
+            font-size: 1rem;
+            background: #f8fafc;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.12);
+            background: #ffffff;
+        }
+
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .form-actions button,
+        .popup-card button {
+            border: none;
+            border-radius: 14px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            background: linear-gradient(135deg, #4338ca, #6366f1);
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .form-actions button:hover,
+        .popup-card button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.55);
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+        }
+
+        .popup-card {
+            background: white;
+            padding: 28px;
+            border-radius: 24px;
+            border: 1px solid #cbd5e1;
+            text-align: center;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+            width: min(100%, 420px);
+        }
+
+        .popup-card h2 {
+            margin: 0 0 12px;
+            font-size: 1.5rem;
+            color: #0f172a;
+        }
+
+        .popup-card p {
+            margin: 0 0 20px;
+            color: #475569;
+        }
+
+        .student-badge {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 18px;
+            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.12);
+            color: #0f172a;
+            font-size: 0.92rem;
+            line-height: 1.45;
+            z-index: 999;
+            text-align: right;
+        }
+
+        .student-badge strong {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 640px) {
+            .student-badge {
+                position: static;
+                margin: 0 auto 24px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="student-badge">
+        <strong>Paarth Maheshwari</strong>
+        PRN: 24070521050<br>
+        SEM: 5 A
+    </div>
+
+    <!-- Central Popup Wrapper Markup -->
+    <div id="customPopup" class="popup-overlay">
+        <div class="popup-card">
+            <h2>Notification</h2>
+            <p>Welcome to SIT NAGPUR</p>
+            <button id="closePopupBtn">OK / Close</button>
+        </div>
+    </div>
+
+    <div class="page-shell">
+        <h1>SIT Nagpur - Student Entry Form</h1>
+        <p><a href="index.html">&larr; Back to Home Page</a></p>
+
+        <hr>
+
+        <form action="#" method="POST" onsubmit="alert('Form submitted successfully!'); return false;">
+            <p class="field">Full Name: <input type="text" name="studentName" required></p>
+            <p class="field">Roll Number: <input type="text" name="rollNo" required></p>
+            <p class="field">Branch / Department: <input type="text" name="branch" required></p>
+            <p class="field">Email Address: <input type="email" name="email" required></p>
+            <p class="field">Contact Number: <input type="tel" name="phone" required></p>
+            
+            <p class="form-actions">
+                <button type="submit">Submit Details</button>
+                <button type="reset">Clear Form</button>
+            </p>
+        </form>
+    </div>
+
+    <!-- External Shared JS File -->
+    <script src="popup.js"></script>
+</body>
+</html>

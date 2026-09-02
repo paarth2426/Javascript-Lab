@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>String Methods and Regular Expressions</title>
+<style>
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        background: #eef9f0;
+        color: #25202a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 35px 20px;
+    }
+
+    .page {
+        width: min(1050px, 100%);
+    }
+
+    h1 {
+        text-align: center;
+        color: #3f8f55;
+        font-size: clamp(1.8rem, 4vw, 2.7rem);
+        margin: 0 0 22px;
+        letter-spacing: -0.5px;
+    }
+
+    .card {
+        background: #fff;
+        border: 1px solid #d7eadb;
+        border-radius: 18px;
+        box-shadow: 0 14px 35px rgba(151, 58, 104, 0.12);
+        padding: 30px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    label {
+        display: block;
+        color: #3f8f55;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    textarea, input {
+        width: 100%;
+        border: 1px solid #b9d8bf;
+        border-radius: 9px;
+        background: #fbfffc;
+        color: #302631;
+        font: inherit;
+        padding: 12px 14px;
+        outline: none;
+        transition: .2s;
+    }
+
+    textarea {
+        min-height: 125px;
+        resize: vertical;
+    }
+
+    textarea:focus, input:focus {
+        border-color: #4f9f62;
+        box-shadow: 0 0 0 3px rgba(214, 51, 135, .12);
+    }
+
+    .button-wrap {
+        display: flex;
+        justify-content: center;
+        margin: 4px 0 20px;
+    }
+
+    button {
+        border: 0;
+        border-radius: 8px;
+        padding: 12px 28px;
+        background: #4a9b5d;
+        color: white;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 5px 12px rgba(212, 47, 131, .22);
+    }
+
+    button:hover { background: #3b824c; }
+
+    .results {
+        border-left: 4px solid #4a9b5d;
+        background: #f4fbf5;
+        border-radius: 0 10px 10px 0;
+        padding: 18px 20px;
+    }
+
+    .results h2 {
+        color: #3f8f55;
+        margin: 0 0 14px;
+        font-size: 1.15rem;
+    }
+
+    .result-row {
+        padding: 8px 0;
+        border-bottom: 1px solid #dceee0;
+        line-height: 1.55;
+    }
+
+    .result-row:last-child { border-bottom: 0; }
+
+    .key {
+        font-weight: 700;
+        color: #42323d;
+    }
+
+    .value {
+        color: #5a4552;
+        overflow-wrap: anywhere;
+    }
+
+    .error {
+        color: #c62828;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+
+    @media (min-width: 800px) {
+        .form-grid {
+            grid-template-columns: 1fr 1fr;
+            align-items: start;
+        }
+        .paragraph-field { grid-column: 1 / -1; }
+    }
+</style>
+</head>
+<body>
+<main class="page">
+    <h1>String Methods and Regular Expressions</h1>
+
+    <section class="card">
+        <div class="form-grid">
+            <div class="paragraph-field">
+                <label for="paragraph">Enter a Paragraph: (Paarth Maheshwari • PRN: 24070521050 • SEM: 5 A)</label>
+                <textarea id="paragraph" placeholder="Enter a paragraph to analyze...">JavaScript is a powerful programming language. It is widely used for web development, allowing developers to create interactive and dynamic web pages. Regular expressions are a key feature in JavaScript, enabling pattern matching and text manipulation. With string methods and regular expressions, developers can efficiently process and analyze text data.</textarea>
+            </div>
+
+            <div>
+                <label for="email">Enter Email:</label>
+                <input id="email" type="text" placeholder="example@email.com">
+                <div id="emailError" class="error"></div>
+            </div>
+        </div>
+
+        <div class="button-wrap">
+            <button type="button" id="processBtn">Process</button>
+        </div>
+
+        <div class="results">
+            <h2>Results</h2>
+            <div class="result-row"><span class="key">Words in Paragraph:</span> <span class="value" id="wordCount">-</span></div>
+            <div class="result-row"><span class="key">Vowel Count:</span> <span class="value" id="vowelCount">-</span></div>
+            <div class="result-row"><span class="key">Replaced Paragraph:</span> <span class="value" id="replaced">-</span></div>
+            <div class="result-row"><span class="key">Position of "powerful":</span> <span class="value" id="position">-</span></div>
+            <div class="result-row"><span class="key">Email Validation Result:</span> <span class="value" id="emailResult">-</span></div>
+            <div class="result-row"><span class="key">Extracted Emails:</span> <span class="value" id="extracted">-</span></div>
+            <div class="result-row"><span class="key">Reversed Paragraph:</span> <span class="value" id="reversed">-</span></div>
+            <div class="result-row"><span class="key">Vowels in Reversed Paragraph:</span> <span class="value" id="reversedVowels">-</span></div>
+        </div>
+    </section>
+</main>
+
+<script>
+function processText() {
+    const paragraph = document.getElementById("paragraph").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // split()
+    const words = paragraph ? paragraph.split(/\s+/) : [];
+
+    // match()
+    const vowels = paragraph.match(/[aeiou]/gi) || [];
+    const emails = paragraph.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+
+    // replace()
+    const replacedParagraph = paragraph.replace(/javascript/gi, "JS");
+
+    // indexOf()
+    const position = paragraph.toLowerCase().indexOf("powerful");
+
+    // reverse() with split() and join()
+    const reversedParagraph = paragraph.split("").reverse().join("");
+    const reversedVowels = reversedParagraph.match(/[aeiou]/gi) || [];
+
+    document.getElementById("wordCount").textContent = words.length;
+    document.getElementById("vowelCount").textContent = vowels.length;
+    document.getElementById("replaced").textContent = replacedParagraph || "No text entered.";
+    document.getElementById("position").textContent =
+        position === -1 ? "Not found" : position;
+    document.getElementById("emailResult").textContent =
+        emailPattern.test(email) ? "Valid Email" : "Invalid Email";
+    document.getElementById("extracted").textContent =
+        emails.length ? emails.join(", ") : "No email addresses found.";
+    document.getElementById("reversed").textContent =
+        reversedParagraph || "No text entered.";
+    document.getElementById("reversedVowels").textContent = reversedVowels.length;
+
+    document.getElementById("emailError").textContent =
+        email && !emailPattern.test(email) ? "Please enter a valid email address." : "";
+}
+
+document.getElementById("processBtn").addEventListener("click", processText);
+</script>
+</body>
+</html>

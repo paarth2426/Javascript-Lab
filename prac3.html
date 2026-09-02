@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        .wide { max-width: 800px; }
+        h2 { margin-bottom: 20px; color: #333; text-align: center; }
+        .field { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #0066cc; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0052a3; }
+        .rules { background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px; font-size: 13px; }
+        .rule { color: #888; margin-bottom: 4px; }
+        .rule.checked { color: #2e7d32; font-weight: bold; }
+        .error { color: #d32f2f; background: #ffebee; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: none; text-align: center; font-size: 14px; }
+        .hidden { display: none !important; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f5f5f5; padding: 10px; border-radius: 4px; }
+        .logout { width: auto; padding: 6px 12px; background: #555; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f4f4f4; }
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginView" class="box">
+        <h2>Student Login</h2>
+        <div id="errorBox" class="error">Password does not meet all security requirements!</div>
+        
+        <div class="field">
+            <label>Username</label>
+            <input type="text" id="userIn" placeholder="Enter username">
+        </div>
+        
+        <div class="field">
+            <label>Password</label>
+            <input type="password" id="passIn" placeholder="Enter password">
+            <div class="rules">
+                <div id="rLen" class="rule">❌ Minimum 8 characters</div>
+                <div id="rCap" class="rule">❌ At least one Capital letter (A-Z)</div>
+                <div id="rNum" class="rule">❌ At least one Number (0-9)</div>
+                <div id="rSym" class="rule">❌ At least one Special symbol (!@#$%^&*)</div>
+            </div>
+        </div>
+        
+        <button id="loginBtn">Login to Portal</button>
+    </div>
+
+    <!-- GRADING PORTAL -->
+    <div id="portalView" class="box wide hidden">
+        <h2>Grading Portal</h2>
+        <div class="header-row">
+            <span>Welcome, <strong id="userDoc">User</strong></span>
+            <button class="logout" id="logoutBtn">Log Out</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Mathematics</td><td>95/100</td><td>A+</td><td class="pass">Pass</td></tr>
+                <tr><td>Computer Science</td><td>88/100</td><td>A</td><td class="pass">Pass</td></tr>
+                <tr><td>Physics</td><td>74/100</td><td>B</td><td class="pass">Pass</td></tr>
+                <tr><td>Chemistry</td><td>32/100</td><td>F</td><td class="fail">Fail</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const passIn = document.getElementById('passIn');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        // Dynamic live checker updates classes as you type
+        passIn.addEventListener('input', function() {
+            const val = passIn.value;
+            
+            // Check individual flags
+            const hasLen = val.length >= 8;
+            const hasCap = /[A-Z]/.test(val);
+            const hasNum = /[0-9]/.test(val);
+            const hasSym = /[\!@#\$%\^&\*\(\)_\+\-\=\[\]\{\};':",\.\/<>\?\|\\~`]/.test(val);
+
+            // Toggle Visual Styles
+            toggleRule('rLen', hasLen, "Minimum 8 characters");
+            toggleRule('rCap', hasCap, "At least one Capital letter (A-Z)");
+            toggleRule('rNum', hasNum, "At least one Number (0-9)");
+            toggleRule('rSym', hasSym, "At least one Special symbol (!@#$%^&*)");
+        });
+
+        function toggleRule(id, isValid, text) {
+            const el = document.getElementById(id);
+            if (isValid) {
+                el.className = "rule checked";
+                el.innerText = "✓ " + text;
+            } else {
+                el.className = "rule";
+                el.innerText = "❌ " + text;
+            }
+        }
+
+        // Action Trigger 
+        loginBtn.addEventListener('click', function() {
+            const val = passIn.value;
+            const username = document.getElementById('userIn').value;
+
+            // Final Master Verification
+            const hasLen = val.length >= 8;
+            const hasCap = /[A-Z]/.test(val);
+            const hasNum = /[0-9]/.test(val);
+            const hasSym = /[\!@#\$%\^&\*\(\)_\+\-\=\[\]\{\};':",\.\/<>\?\|\\~`]/.test(val);
+
+            if (username.trim() !== "" && hasLen && hasCap && hasNum && hasSym) {
+                document.getElementById('errorBox').style.display = 'none';
+                document.getElementById('userDoc').innerText = username;
+                document.getElementById('loginView').classList.add('hidden');
+                document.getElementById('portalView').classList.remove('hidden');
+            } else {
+                document.getElementById('errorBox').style.display = 'block';
+            }
+        });
+
+        // Reset system on Logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            passIn.value = "";
+            document.getElementById('userIn').value = "";
+            toggleRule('rLen', false, "Minimum 8 characters");
+            toggleRule('rCap', false, "At least one Capital letter (A-Z)");
+            toggleRule('rNum', false, "At least one Number (0-9)");
+            toggleRule('rSym', false, "At least one Special symbol (!@#$%^&*)");
+            
+            document.getElementById('portalView').classList.add('hidden');
+            document.getElementById('loginView').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
